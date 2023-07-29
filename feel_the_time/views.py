@@ -2,6 +2,10 @@ from django.shortcuts import render
 from django.utils import timezone
 from .models import Time, Activities
 from django.db.models import Sum
+from matplotlib import pyplot as plt
+from io import BytesIO
+import base64
+
 
 buttons = ['Работа', 'Семья', 'Готовить', 'Спорт', 'В пути', 'Ванна', 'Отдых', 'Уборка', 'Есть, пить']
 
@@ -21,17 +25,11 @@ def button(request):
         current_activity = Time.objects.order_by('-time')[0]
         all_activities = Time.objects.order_by('-time')[1:]
 
-        # work_time = Time.objects.filter(activity='Работа').aggregate(Sum('duration'))
-        # family_time = Time.objects.filter(activity='Семья').aggregate(Sum('duration'))
-        # cooking_time = Time.objects.filter(activity='Готовить').aggregate(Sum('duration'))
-
         data = {'current_activity': current_activity,
                 'all': all_activities,
                 'difference_in_sec': difference_in_sec,
-                # 'work_time': work_time['duration__sum'],
-                # 'family_time': family_time['duration__sum'],
-                # 'cooking_time': cooking_time['duration__sum'],
-                'buttons': buttons
+                'buttons': buttons,
+                'graphic': grath()
                 }
         return render(request, 'feel_the_time/main.html', context=data)
     else:
@@ -42,6 +40,32 @@ def button(request):
                 }
         return render(request, 'feel_the_time/main.html', context=data)
 
+def grath():
+
+    total_time = []
+    activities = Activities.objects.all()
+    for obj in activities:
+        sum_result = Time.objects.filter(current_activity=obj).aggregate(Sum('duration'))
+        total_time.append(sum_result['duration__sum'])
 
 
+    acts = Activities.objects.all()
+    names = [act.activity_name for act in acts]
 
+    plt.figure(figsize=(10, 6))
+    plt.barh(names, total_time)
+    plt.xlabel('Время')
+    plt.ylabel('Активность')
+    plt.title('Затраченное время')
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()
+
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    graphic = base64.b64encode(image_png)
+    graphic = graphic.decode('utf-8')
+
+    return graphic

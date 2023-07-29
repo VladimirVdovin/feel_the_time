@@ -24,10 +24,11 @@
             {{ item.name }} - {{ item.current_activity.activity_name }} - {{ item.time|date:"H:i:s" }} - {{ item.duration }}
         {% endfor %}
         </textarea>
-        <h3> Работа {{ work_time }} секунд </h3>
-        <h3> Семья {{ family_time }} секунд </h3>
-        <h3> Готовить {{ cooking_time }} секунд </h3>
+
     </form>
+    <div class="form-3">
+        <img src="data:image/png;base64,{{ graphic }}" alt="График стоимости машин">
+    </div>
 
 </body>
 </html>
