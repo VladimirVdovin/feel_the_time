@@ -51,3 +51,18 @@ button {
     margin: 0.5rem;
 
 }
+
+nav {
+    background-color: #3ca3c1;
+}
+
+ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+}
+
+li {
+    margin: 20px;
+    color: white;
+}

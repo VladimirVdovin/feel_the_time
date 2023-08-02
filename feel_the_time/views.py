@@ -30,7 +30,7 @@ def button(request):
         data = {'current_activity': current_activity,
                 'all': all_activities,
                 'buttons': buttons,
-                'graphic': grath()
+                # 'graphic': graph()
                 }
         return render(request, 'feel_the_time/main.html', context=data)
     else:
@@ -38,12 +38,12 @@ def button(request):
         all_activities = Time.objects.order_by('-time')[1:]
         data = {'all': all_activities,
                 'buttons': buttons,
-                'graphic': grath()
+                # 'graphic': graph()
                 }
         return render(request, 'feel_the_time/main.html', context=data)
 
 
-def grath():
+def graph(request):
 
     total_time = []
     activities = Activities.objects.all()
@@ -70,4 +70,5 @@ def grath():
     graphic = base64.b64encode(image_png)
     graphic = graphic.decode('utf-8')
 
-    return graphic
+    return render(request, 'feel_the_time/graph.html', context={'graphic': graphic})
+

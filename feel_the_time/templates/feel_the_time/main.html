@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="{% static 'feel_of_time/main.css' %}">
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'main_page' %}">Главная</a></li>
+            <li><a href="{% url 'graph' %}">График</li>
+            <li>О проекте</li>
+        </ul>
+    </nav>
     <h2>Feel the time</h2>
     <form method="post", class="form-1">
         {% csrf_token %}
@@ -26,9 +33,6 @@
         </textarea>
 
     </form>
-    <div class="form-3">
-        <img src="data:image/png;base64,{{ graphic }}" alt="График стоимости машин">
-    </div>
 
 </body>
 </html>
