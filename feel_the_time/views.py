@@ -60,6 +60,8 @@ def graph(request):
     plt.ylabel('Активность')
     plt.title('Затраченное время')
 
+
+
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
     plt.close()

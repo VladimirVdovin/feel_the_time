@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'feel_of_time/main.css' %}">
 </head>
 <body>
+    {% include 'includes/navbar.html' %}
     <h2>График активности за сегодня</h2>
     <div class="form-3">
         <img src="data:image/png;base64,{{ graphic }}" alt="График стоимости машин">
