@@ -30,7 +30,6 @@ def button(request):
         data = {'current_activity': current_activity,
                 'all': all_activities,
                 'buttons': buttons,
-                # 'graphic': graph()
                 }
         return render(request, 'feel_the_time/main.html', context=data)
     else:
@@ -38,7 +37,6 @@ def button(request):
         all_activities = Time.objects.order_by('-time')[1:]
         data = {'all': all_activities,
                 'buttons': buttons,
-                # 'graphic': graph()
                 }
         return render(request, 'feel_the_time/main.html', context=data)
 
@@ -61,7 +59,6 @@ def graph(request):
     plt.title('Затраченное время')
 
 
-
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
     plt.close()
@@ -73,4 +70,9 @@ def graph(request):
     graphic = graphic.decode('utf-8')
 
     return render(request, 'feel_the_time/graph.html', context={'graphic': graphic})
+
+def just_try(request):
+    pass
+
+
 

@@ -13,6 +13,7 @@ class Time(models.Model):
     current_activity = models.ForeignKey(Activities, on_delete=models.SET_NULL, null=True)
     time = models.DateTimeField()
     duration = models.IntegerField(default=0)
+    new_duration = models.DurationField(blank=True, null=True)
 
 
 
