@@ -9,7 +9,13 @@
 </head>
 <body>
     {% include 'includes/navbar.html' %}
-    <h2>График активности за сегодня</h2>
+    {% if period == 'day' %}
+        <h2>График активности за сегодня</h2>
+    {% elif period == 'week' %}
+        <h2>График активности за неделю</h2>
+    {% elif period == 'month' %}
+        <h2>График активности за месяц</h2>
+    {% endif %}
     <div class="form-3">
         <img src="data:image/png;base64,{{ graphic }}" alt="График стоимости машин">
     </div>

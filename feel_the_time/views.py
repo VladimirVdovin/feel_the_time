@@ -5,6 +5,8 @@ from django.db.models import Sum
 from matplotlib import pyplot as plt
 from io import BytesIO
 import base64
+from datetime import timedelta
+from django.http import HttpResponse
 
 
 buttons = ['Работа', 'Семья', 'Готовить', 'Спорт', 'В пути', 'Ванна', 'Отдых', 'Уборка', 'Есть, пить']
@@ -16,10 +18,8 @@ def button(request):
         current_time = timezone.now()
 
         if Time.objects.count() != 0:
-            penultimate_activity = Time.objects.order_by('-id')[0]
-            difference = current_time - penultimate_activity.time
-            difference_in_sec = difference.total_seconds()
-            penultimate_activity.duration = difference_in_sec
+            penultimate_activity = Time.objects.last()
+            penultimate_activity.duration = current_time - penultimate_activity.time
             penultimate_activity.save()
 
         activity = Activities.objects.get_or_create(activity_name=button_value)
@@ -41,23 +41,48 @@ def button(request):
         return render(request, 'feel_the_time/main.html', context=data)
 
 
-def graph(request):
+def graph(request, period: str):
 
     total_time = []
     activities = Activities.objects.all()
-    current_time = timezone.now()
-    for obj in activities:
-        sum_result = Time.objects.filter(current_activity=obj, time__day=current_time.day).aggregate(Sum('duration'))
-        total_time.append(sum_result['duration__sum'] or 0)
+    now = timezone.now()
+    current_time = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    names = [act.activity_name for act in activities]
+    if period == "day":
+        for obj in activities:
+            sum_result = Time.objects.filter(current_activity=obj, time__day=current_time.day).aggregate(Sum('duration'))
+            total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
+
+
+    elif period == 'week':
+        current_weekday = current_time.weekday()
+        start_of_week = current_time - timedelta(days=current_weekday)
+        for obj in activities:
+            sum_result = Time.objects.filter(current_activity=obj, time__day__gte=start_of_week.day).aggregate(Sum('duration'))
+            total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
+
+    elif period == 'month':
+        current_monthday = current_time.day
+        start_of_month = current_time - timedelta(days=current_monthday-1)
+        for obj in activities:
+            sum_result = Time.objects.filter(current_activity=obj, time__day__gte=start_of_month.day).aggregate(Sum('duration'))
+            total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
+
+    activities_names = [act.activity_name for act in activities]
 
     plt.figure(figsize=(9, 5))
-    plt.barh(names, total_time)
+    plt.barh(activities_names, total_time)
+    max_time = max(total_time)
+    x_limit = max_time * 1.3
+
     plt.xlabel('Время')
     plt.ylabel('Активность')
     plt.title('Затраченное время')
+    plt.xlim(0, x_limit)
 
+    for i, time in enumerate(total_time):
+        plt.annotate(f'{int(time//3600)} ч {int((time % 3600)//60)} мин', (time, i), textcoords="offset points",
+                     xytext=(35, 0), ha='center', fontsize=10)
 
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
@@ -69,10 +94,15 @@ def graph(request):
     graphic = base64.b64encode(image_png)
     graphic = graphic.decode('utf-8')
 
-    return render(request, 'feel_the_time/graph.html', context={'graphic': graphic})
+    return render(request, 'feel_the_time/graph.html', context={'graphic': graphic, 'period': period})
 
-def just_try(request):
-    pass
+def buttons_set(request):
+    return HttpResponse('<h1>Здесь будет панель, в которой может будет выбирать набор кнопок для каждого пользователя</h1><br>'
+                 '<h3>(Нужно создать таблицу buttons и написать код)</h3>')
+
+
+
+
 
 
 

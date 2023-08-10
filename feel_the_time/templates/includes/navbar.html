@@ -2,9 +2,10 @@
 <nav>
     <ul>
         <li><a href="{% url 'main_page' %}">Главная</a></li>
-        <li><a href="{% url 'graph' %}">День</a></li>
-        <li>Неделя</li>
-        <li>Кнопки</li>
+        <li><a href="{% url 'graph' period='day' %}">День</a></li>
+        <li><a href="{% url 'graph' period='week' %}">Неделя</a></li>
+        <li><a href="{% url 'graph' period='month' %}">Месяц</a></li>
+        <li><a href="{% url 'buttons_set' %}">Кнопки</a></li>
         <li>О проекте</li>
     </ul>
 </nav>

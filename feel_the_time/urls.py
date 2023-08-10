@@ -1,9 +1,8 @@
 from django.urls import path
-from .views import button, graph, just_try
+from .views import button, graph, buttons_set
 
 urlpatterns = [
     path('', button, name='main_page'),
-    path('graph', graph, name='graph'),
-    path('just_try', just_try, name='just_try'),
-
+    path('graph/<str:period>', graph, name='graph'),
+    path('buttons', buttons_set, name='buttons_set'),
 ]

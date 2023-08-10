@@ -4,7 +4,7 @@ from.models import Time, Activities
 
 
 class TimeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'current_activity', 'time', 'duration']
+    list_display = ['name', 'time', 'duration']
 
 class ActivitiesAdmin(admin.ModelAdmin):
     list_display = ['activity_name', 'activity_rank']

@@ -20,7 +20,7 @@
     <form class="form-2">
         <h2>Сейчас: {{ current_activity.current_activity.activity_name }} - {{ current_activity.time|date:"H:i:s" }}</h2>
         <br>
-        <textarea cols="84" rows="10">
+        <textarea cols="84" rows="17">
         {% for item in all %}
             {{ item.name }} - {{ item.current_activity.activity_name }} - {{ item.time|date:"H:i:s" }} - {{ item.duration }}
         {% endfor %}

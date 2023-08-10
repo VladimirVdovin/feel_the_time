@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import timedelta
 
 class Activities(models.Model):
     activity_name = models.CharField(max_length=30, null=True)
@@ -12,8 +13,14 @@ class Time(models.Model):
     name = models.CharField(max_length=30, null=True)
     current_activity = models.ForeignKey(Activities, on_delete=models.SET_NULL, null=True)
     time = models.DateTimeField()
-    duration = models.IntegerField(default=0)
-    new_duration = models.DurationField(blank=True, null=True)
+    duration = models.DurationField(default=timedelta(seconds=0))
+
+class Buttons(models.Model):
+    pass
+
+class Person(models.Model):
+    pass
+
 
 
 
