@@ -8,6 +8,19 @@
     <link rel="stylesheet" href="{% static 'feel_of_time/main.css' %}">
 </head>
 <body>
+    <h2>Добавьте кпопки</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div>
+            {{ field.label_tag }}
+            {{ field }}
+        </div>
+        {% endfor %}
+
+        <button type="submit">Отправить</button>
+    </form>
 
 </body>
 </html>
