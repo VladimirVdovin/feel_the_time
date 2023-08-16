@@ -101,14 +101,25 @@ def graph(request, period: str):
 
 class ButtonSetView(View):
     def get(self, request):
+        user_name = "Vladimir"
+        person = Person.objects.get(user_name=user_name)
         form = PersonalButtonsForm()
-        return render(request, 'feel_the_time/buttons.html', context={'form': form})
+        return render(request, 'feel_the_time/buttons.html', context={'form': form, 'personal_buttons': person})
 
     def post(self, request):
-        form = PersonalButtonsForm(request.POST)
+        user_name = "Vladimir"
+        person = Person.objects.get(user_name=user_name)
+        form = PersonalButtonsForm(request.POST, instance=person)
+
         if form.is_valid():
-            form.save()
-        return render(request, 'feel_the_time/buttons.html', context={'form': form})
+            instance = form.save(commit=False)
+            instance.button_set += request.POST.getlist('button_set')
+            instance.rank_set += request.POST.getlist('rank_set')
+            instance.save()
+            form = PersonalButtonsForm()
+        return render(request, 'feel_the_time/buttons.html', context={'form': form, 'personal_buttons': person})
+
+
 
 
 

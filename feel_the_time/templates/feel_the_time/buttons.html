@@ -8,19 +8,27 @@
     <link rel="stylesheet" href="{% static 'feel_of_time/main.css' %}">
 </head>
 <body>
-    <h2>Добавьте кпопки</h2>
-    <form method="post">
-        {% csrf_token %}
+    {% include 'includes/navbar.html' %}
+    <h2>Определите набор кнопок-активностей</h2>
+    <form method="post" class="form-1">
+        {% for button_name in personal_buttons.button_set %}
+            <h4><input type="checkbox" checked> {{ button_name }}</h4>
+        {% endfor %}
+    </form>
 
+    <form method="post" class="form-2">
+        {% csrf_token %}
+        <h2>CвоЯ кпопка</h2>
+        <br>
         {% for field in form %}
         <div>
             {{ field.label_tag }}
             {{ field }}
         </div>
         {% endfor %}
-
         <button type="submit">Отправить</button>
     </form>
+
 
 </body>
 </html>

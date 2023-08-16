@@ -12,11 +12,11 @@ class Activities(models.Model):
 
 class Person(models.Model):
     user_name = models.CharField(max_length=15, null=True)
-    button_set = ArrayField(models.CharField(max_length=15), null=True)
-    rank_set = ArrayField(models.CharField(max_length=15), null=True)
+    button_set = ArrayField(models.CharField(max_length=100), null=True)
+    rank_set = ArrayField(models.CharField(max_length=100), null=True)
 
     def __str__(self):
-        return f'{self.user_name} - {self.button_set} - {self.button_set}'
+        return f'{self.user_name} - {self.button_set} - {self.rank_set}'
 
 
 class Time(models.Model):
