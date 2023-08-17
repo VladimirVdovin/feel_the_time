@@ -108,16 +108,26 @@ class ButtonSetView(View):
 
     def post(self, request):
         user_name = "Vladimir"
-        person = Person.objects.get(user_name=user_name)
-        form = PersonalButtonsForm(request.POST, instance=person)
+        if 'button_set_form' in request.POST:
+            checkbox_set = request.POST.getlist("checkbox_set")
+            return HttpResponse(checkbox_set)
+        elif 'add_button_form' in request.POST:
+            person = Person.objects.get(user_name=user_name)
+            old_buttons = person.button_set or []
+            old_ranks = person.rank_set or []
+            form = PersonalButtonsForm(request.POST, instance=person)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                new_button = request.POST.getlist('button_set')
+                new_rank = request.POST.getlist('rank_set')
+                old_buttons.extend(new_button)
+                old_ranks.extend(new_rank)
+                instance.button_set = old_buttons
+                instance.rank_set = old_ranks
+                instance.save()
+                form = PersonalButtonsForm()
+            return render(request, 'feel_the_time/buttons.html', context={'form': form, 'personal_buttons': person})
 
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.button_set += request.POST.getlist('button_set')
-            instance.rank_set += request.POST.getlist('rank_set')
-            instance.save()
-            form = PersonalButtonsForm()
-        return render(request, 'feel_the_time/buttons.html', context={'form': form, 'personal_buttons': person})
 
 
 
