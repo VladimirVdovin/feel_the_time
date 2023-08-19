@@ -13,8 +13,6 @@ h2 {
 }
 
 .form-1 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
     margin: 1.5rem auto 5px;
     width: 90%;
     max-width: 40rem;
@@ -23,6 +21,7 @@ h2 {
     font-size: 16px;
     background-color: white;
     box-shadow: 0 2px 8px #3ca3c1;
+    /* position: relative; */
 }
 
 .form-2 {
@@ -40,9 +39,17 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
+
 }
 
-button {
+div {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 1rem;
+
+}
+
+.ordinary_button {
     cursor: pointer;
     background-color: #bf0d55;
     border-radius: 5px;
@@ -52,6 +59,12 @@ button {
     padding: 12px 20px;
     font-size: 18px;
 
+}
+
+.centered_button_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 nav {

@@ -1,25 +1,31 @@
+{% extends 'base.html' %}
+
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Кнопки</title>
+{% block title %}
+    Кнопки
+{% endblock %}
+
+{% block css_additional %}
     <link rel="stylesheet" href="{% static 'feel_of_time/main.css' %}">
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
+
     {% include 'includes/navbar.html' %}
 
     <h2>Определите набор кнопок-активностей</h2>
     <form method="post" class="form-1">
         {% csrf_token %}
-        {% for button_name in personal_buttons.button_set %}
-            <h4><input type="checkbox" name="checkbox_set" value="{{ button_name }}" checked> {{ button_name }}</h4>
-        {% endfor %}
-        <br>
-        <button type="submit" name="button_set_form">Подтвердить</button>
+        <div>
+            {% for button_name in personal_buttons.button_set %}
+                <h4><input type="checkbox" name="checkbox_set" value="{{ button_name }}" checked> {{ button_name }}</h4>
+            {% endfor %}
+        </div>
+        <div class = centered_button_container>
+            <button type="submit" name="button_set_form" class='ordinary_button'>Подтвердить</button>
+        </div>
     </form>
-
 
     <form method="post" class="form-2">
         {% csrf_token %}
@@ -30,11 +36,10 @@
             {{ field.label_tag }}
             {{ field }}
         </div>
-
         {% endfor %}
-        <button type="submit" name="add_button_form">Отправить</button>
+        <div class = centered_button_container>
+            <button type="submit" class='ordinary_button' name="add_button_form">Отправить</button>
+        </div>
     </form>
 
-
-</body>
-</html>
+{% endblock %}

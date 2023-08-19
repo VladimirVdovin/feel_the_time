@@ -1,20 +1,27 @@
+{% extends 'base.html' %}
+
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Feel the time</title>
+{% block title %}
+    Feel the time
+{% endblock %}
+
+{% block css_additional %}
     <link rel="stylesheet" href="{% static 'feel_of_time/main.css' %}">
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
+
     {% include 'includes/navbar.html' %}
+
     <h2>Feel the time</h2>
     <form method="post", class="form-1">
         {% csrf_token %}
-        {% for button in buttons %}
-            <button type="submit" name="button_click" value="{{ button }}">{{ button }}</button>
-        {% endfor %}
+        <div>
+            {% for button in buttons %}
+                <button type="submit" class="ordinary_button" name="button_click" value="{{ button }}">{{ button }}</button>
+            {% endfor %}
+        </div>
     </form>
 
     <form class="form-2">
@@ -28,5 +35,4 @@
 
     </form>
 
-</body>
-</html>
+{% endblock %}

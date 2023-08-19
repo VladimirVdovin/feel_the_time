@@ -110,7 +110,10 @@ class ButtonSetView(View):
         user_name = "Vladimir"
         if 'button_set_form' in request.POST:
             checkbox_set = request.POST.getlist("checkbox_set")
-            return HttpResponse(checkbox_set)
+            buttons_change = Person.objects.get(user_name=user_name)
+            buttons_change.button_set = checkbox_set
+            buttons_change.save()
+            return HttpResponse(buttons_change.button_set)
         elif 'add_button_form' in request.POST:
             person = Person.objects.get(user_name=user_name)
             old_buttons = person.button_set or []
