@@ -11,10 +11,22 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Здесь будет осуществлена авторизация пользователя. Вскоре</h1>
-    <form method="post">
+
+    {% include 'includes/navbar.html' %}
+
+    <h2>Регистрация пользователя</h2>
+    <form method="post" class="form-2">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <div>
+            {% for field in form %}
+                {{ field.label_tag }}
+                {{ field }} <br>
+                {{ field.errors}}
+            <br>
+            {% endfor %}
+        </div>
+
         <button type="submit">Pегистрация</button>
     </form>
 {% endblock %}

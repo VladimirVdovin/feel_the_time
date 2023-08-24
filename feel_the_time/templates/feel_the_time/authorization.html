@@ -11,10 +11,14 @@
 {% endblock %}
 
 {% block body %}
-  <h1>Здесь будет осуществлена авторизация пользователя. Вскоре</h1>
+
+{% include 'includes/navbar.html' %}
+
+  <h2>Авторизация</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Авторизация</button>
     </form>
+
 {% endblock %}
