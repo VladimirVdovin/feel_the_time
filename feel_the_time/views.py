@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from .models import Time, Activities, Person
-from .form import PersonalButtonsForm
+from .forms import PersonalButtonsForm, RegistrationForm, AuthForm
 from django.db.models import Sum
 from matplotlib import pyplot as plt
 from io import BytesIO
@@ -9,8 +9,14 @@ import base64
 from datetime import timedelta
 from django.views import View
 from django.http import HttpResponse
+from django.contrib.auth import login
 
 
+
+# if Activities.objects.count != 0:
+#     user = Person.objects.get(user_name='Vladimir')
+#     buttons = user.button_set
+# else:
 buttons = ['Работа', 'Семья', 'Готовить', 'Спорт', 'В пути', 'Ванна', 'Отдых', 'Уборка', 'Есть, пить']
 
 
@@ -103,8 +109,14 @@ class ButtonSetView(View):
     def get(self, request):
         user_name = "Vladimir"
         person = Person.objects.get(user_name=user_name)
+        all_activities = Activities.objects.values_list('activity_name', flat=True)
         form = PersonalButtonsForm()
-        return render(request, 'feel_the_time/buttons.html', context={'form': form, 'personal_buttons': person})
+        content = {
+            'form': form,
+            'personal_buttons': person,
+            'all_buttons': all_activities
+            }
+        return render(request, 'feel_the_time/buttons.html', context=content)
 
     def post(self, request):
         user_name = "Vladimir"
@@ -121,6 +133,7 @@ class ButtonSetView(View):
             form = PersonalButtonsForm(request.POST, instance=person)
             if form.is_valid():
                 instance = form.save(commit=False)
+                Activities.objects.create(activity_name=instance.button_set[0], activity_rank=instance.rank_set[0])
                 new_button = request.POST.getlist('button_set')
                 new_rank = request.POST.getlist('rank_set')
                 old_buttons.extend(new_button)
@@ -129,7 +142,38 @@ class ButtonSetView(View):
                 instance.rank_set = old_ranks
                 instance.save()
                 form = PersonalButtonsForm()
-            return render(request, 'feel_the_time/buttons.html', context={'form': form, 'personal_buttons': person})
+                all_activities = Activities.objects.values_list('activity_name', flat=True)
+
+            return render(request, 'feel_the_time/buttons.html', context={'form': form,
+                                                                          'personal_buttons': person,
+                                                                          'all_buttons': all_activities})
+
+def registration(request):
+    if request.method == "POST":
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+        return redirect('main_page')
+    else:
+        form = RegistrationForm()
+    return render(request, 'feel_the_time/registration.html', context={'form': form})
+
+def authorization(request):
+    if request.method == "POST":
+        form = AuthForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+        return redirect('main_page')
+    else:
+        form = AuthForm()
+    return render(request, 'feel_the_time/authorization.html', context={'form': form})
+
+def about(request):
+    return HttpResponse('<h1>Здесь будет информация о программе</h1>')
+
+
 
 
 

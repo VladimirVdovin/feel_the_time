@@ -2,6 +2,7 @@ from django.db import models
 from datetime import timedelta
 from django.contrib.postgres.fields import ArrayField
 
+
 class Activities(models.Model):
     activity_name = models.CharField(max_length=15, null=True)
     activity_rank = models.CharField(max_length=15, null=True)
