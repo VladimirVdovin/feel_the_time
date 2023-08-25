@@ -3,21 +3,30 @@
 {% load static %}
 
 {% block title %}
-  Регистрация
+    Регистрация
 {% endblock %}
 
 {% block css_additional %}
-  <link rel="stylesheet" href="{% static 'feel_of_time/main.css' %}">
+    <link rel="stylesheet" href="{% static 'feel_of_time/main.css' %}">
 {% endblock %}
 
 {% block body %}
 
 {% include 'includes/navbar.html' %}
 
-  <h2>Авторизация</h2>
-    <form method="post">
+    <h2>Авторизация</h2>
+    <form method="post" class="form-2">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <div>
+        {% for field in form %}
+            {{ field.label_tag }}
+            {{ field }} <br>
+            {{ field.errors }}
+            <br>
+        {% endfor %}
+        </div>
+
         <button type="submit">Авторизация</button>
     </form>
 

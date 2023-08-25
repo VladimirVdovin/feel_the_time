@@ -16,3 +16,4 @@ class RegistrationForm(UserCreationForm):
 
 class AuthForm(AuthenticationForm):
     pass
+
