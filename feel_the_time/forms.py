@@ -5,10 +5,10 @@ from .models import Person
 class PersonalButtonsForm(forms.ModelForm):
     class Meta:
         model = Person
-        fields = ['button_set', 'rank_set']
+        fields = ['actual_button_set', 'actual_rank_set']
         labels = {
-                'button_set': 'Добавьте кпопку',
-                'rank_set': 'Какой у нее статус'
+                'actual_button_set': 'Добавьте кпопку',
+                'actual_rank_set': 'Какой у нее статус'
         }
 
 class RegistrationForm(UserCreationForm):

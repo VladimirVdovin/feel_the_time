@@ -18,18 +18,18 @@
     <form method="post", class="form-1">
         {% csrf_token %}
         <div>
-            {% for button in buttons %}
+            {% for button in person.actual_button_set %}
                 <button type="submit" class="ordinary_button" name="button_click" value="{{ button }}">{{ button }}</button>
             {% endfor %}
         </div>
     </form>
 
     <form class="form-2">
-        <h2>Сейчас: {{ current_activity.current_activity.activity_name }} - {{ current_activity.time|date:"H:i:s" }}</h2>
+        <h2>Сейчас: {{ current_activity.current_activity }} - {{ current_activity.time|date:"H:i:s" }}</h2>
         <br>
         <textarea cols="84" rows="17">
         {% for item in all %}
-            {{ item.name.user_name }} - {{ item.current_activity.activity_name }} - {{ item.time|date:"H:i:s" }} - {{ item.duration }}
+            {{ item.name.username }} - {{ item.current_activity }} - {{ item.time|date:"H:i:s" }} - {{ item.duration }}
         {% endfor %}
         </textarea>
 

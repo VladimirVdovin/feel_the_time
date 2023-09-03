@@ -18,8 +18,8 @@
     <form method="post" class="form-1">
         {% csrf_token %}
         <div>
-            {% for button_name in all_buttons %}
-                {% if button_name in personal_buttons.button_set %}
+            {% for button_name in person.all_personal_buttons %}
+                {% if button_name in person.actual_button_set %}
                     <h4><input type="checkbox" name="checkbox_set" value="{{ button_name }}" checked> {{ button_name }}</h4>
                 {% else %}
                     <h4><input type="checkbox" name="checkbox_set" value="{{ button_name }}"> {{ button_name }}</h4>
