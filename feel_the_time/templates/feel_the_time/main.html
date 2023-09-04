@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load static %}
+{% load duration_filter %}
 
 {% block title %}
     Feel the time
@@ -29,7 +30,7 @@
         <br>
         <textarea cols="84" rows="17">
         {% for item in all %}
-            {{ item.name.username }} - {{ item.current_activity }} - {{ item.time|date:"H:i:s" }} - {{ item.duration }}
+            {{ item.name.username }} - {{ item.current_activity }} - {{ item.time|date:"H:i:s" }} - {{ item.duration|format_timedelta }}
         {% endfor %}
         </textarea>
 

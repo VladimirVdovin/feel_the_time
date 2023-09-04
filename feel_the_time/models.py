@@ -33,7 +33,7 @@ class Person(models.Model):
 
 class Time(models.Model):
     name = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    current_activity = models.CharField(max_length=15, null=True)
+    current_activity = models.CharField(max_length=17, null=True)
     time = models.DateTimeField()
     duration = models.DurationField(default=timedelta(seconds=0))
     comment = models.CharField(max_length=50, null=True)

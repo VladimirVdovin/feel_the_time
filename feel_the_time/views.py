@@ -119,35 +119,36 @@ def graph(request, period: str):
 class ButtonSetView(View):
     def get(self, request):
         person = Person.objects.get(user_name=request.user)
-        # all_activities = Activities.objects.values_list('activity_name', flat=True)
+
         form = PersonalButtonsForm()
         content = {
             'form': form,
             'person': person,
-            # 'all_buttons': all_activities
             }
         return render(request, 'feel_the_time/buttons.html', context=content)
 
     def post(self, request):
         if 'button_set_form' in request.POST:
             checkbox_set = request.POST.getlist("checkbox_set")
-            buttons_change = Person.objects.get(user_name=request.user.username)
+            buttons_change = Person.objects.get(user_name=request.user)
             buttons_change.actual_button_set = checkbox_set
             buttons_change.save()
             return HttpResponse(buttons_change.actual_button_set)
 
         elif 'add_button_form' in request.POST:
-            person = Person.objects.get(user_name=request.user.username)
+            person = Person.objects.get(user_name=request.user)
+
             old_buttons = person.actual_button_set or []
             all_buttons = person.all_personal_buttons or []
             old_ranks = person.actual_rank_set or []
             all_ranks = person.all_personal_ranks or []
+
             form = PersonalButtonsForm(request.POST, instance=person)
             if form.is_valid():
                 instance = form.save(commit=False)
-                # Activities.objects.create(activity_name=instance.actual_button_set[0], activity_rank=instance.actual_rank_set[0])
-                new_button = request.POST.getlist('button_set')
-                new_rank = request.POST.getlist('rank_set')
+
+                new_button = request.POST.getlist('actual_button_set')
+                new_rank = request.POST.getlist('actual_rank_set')
 
                 old_buttons.extend(new_button)
                 old_ranks.extend(new_rank)
@@ -161,11 +162,11 @@ class ButtonSetView(View):
 
                 instance.save()
                 form = PersonalButtonsForm()
-                all_activities = Activities.objects.values_list('activity_name', flat=True)
+
 
             return render(request, 'feel_the_time/buttons.html', context={'form': form,
-                                                                          'personal_buttons': person,
-                                                                          'all_buttons': all_activities})
+                                                                          'person': person,
+                                                                          })
 
 def registration(request):
     if request.method == "POST":
@@ -194,34 +195,6 @@ def about(request):
 
 
 
-# from django.contrib.sessions.models import Session
-
-# def button(request):
-#     if request.method == 'POST':
-#         # Обработка POST-запроса
-#     else:
-#         if request.user.is_authenticated:
-#             user = request.user
-#         else:
-#             if not request.session.get('temporary_user'):
-#                 # Если у пользователя нет временного имени, создаем его
-#                 username = 'User' + str(random.random())
-#                 user = User.objects.create_user(username=username, password='')
-#                 request.session['temporary_user'] = user.username
-#             else:
-#                 # Если у пользователя уже есть временное имя, используем его
-#                 username = request.session['temporary_user']
-#                 user = User.objects.get(username=username)
-#
-#         person, created = Person.objects.get_or_create(user_name=user)
-#         all_activities = Time.objects.filter(name=user).order_by('-time')
-
-# # Получение объекта сессии
-# session = request.session
-#
-# # Установка срока действия сессии для этой конкретной сессии в секундах
-# # Например, установим срок действия данной сессии в 1 час (3600 секунд)
-# session.set_expiry(3600)
 
 
 
