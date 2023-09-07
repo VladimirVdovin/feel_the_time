@@ -6,16 +6,17 @@ from django.db.models import Sum
 from matplotlib import pyplot as plt
 from io import BytesIO
 import base64
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.views import View
 from django.http import HttpResponse
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 import random
+from tzlocal import get_localzone
+import pytz
 
 
-
-def button(request):
+def get_user_or_create_temporary_user(request):
     if request.user.is_authenticated:
         user = request.user
     else:
@@ -28,6 +29,24 @@ def button(request):
         else:
             username = request.session['temporary_user']
             user = User.objects.get(username=username)
+    return user
+
+
+def setting_the_day_border(penultimate_activity, current_time, user):
+    server_timezone = get_localzone()
+    midnight = current_time.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=server_timezone)
+    uts_timezone = pytz.timezone('UTC')
+    midnight_utc = midnight.astimezone(uts_timezone)
+    before_midnight = midnight_utc - penultimate_activity.time
+    after_midnight = current_time - midnight_utc
+    penultimate_activity.duration = before_midnight
+    penultimate_activity.save()
+    Time.objects.create(name=user, time=midnight, current_activity=penultimate_activity.current_activity,
+                        duration=after_midnight)
+
+
+def button(request):
+    user = get_user_or_create_temporary_user(request)
     person, created = Person.objects.get_or_create(user_name=user)
 
     if request.method == 'POST': 
@@ -38,6 +57,9 @@ def button(request):
             penultimate_activity = Time.objects.last()
             penultimate_activity.duration = current_time - penultimate_activity.time
             penultimate_activity.save()
+
+        if timezone.now().day != penultimate_activity.time.day:
+            setting_the_day_border(penultimate_activity, current_time, user)
 
         Time.objects.create(name=user, time=current_time, current_activity=button_value)
         current_activity = Time.objects.filter(name=user).order_by('-time')[0]
@@ -88,7 +110,6 @@ def graph(request, period: str):
                 sum_result = Time.objects.filter(current_activity=obj, time__day__gte=start_of_month.day).aggregate(Sum('duration'))
                 total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
 
-        # activities_names = [act.activity_name for act in activities]
 
         plt.figure(figsize=(9, 5))
         plt.barh(activities, total_time)
