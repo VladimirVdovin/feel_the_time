@@ -18,7 +18,7 @@
     <h2>Определите набор кнопок-активностей</h2>
     <form method="post" class="form-1">
         {% csrf_token %}
-        <div>
+        <div class = "columns">
             {% for button_name in person.all_personal_buttons %}
                 {% if button_name in person.actual_button_set %}
                     <h4><input type="checkbox" name="checkbox_set" value="{{ button_name }}" checked> {{ button_name }}</h4>

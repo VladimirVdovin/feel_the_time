@@ -44,37 +44,60 @@ def setting_the_day_border(penultimate_activity, current_time, user):
     Time.objects.create(name=user, time=midnight, current_activity=penultimate_activity.current_activity,
                         duration=after_midnight)
 
+def timer_start(request):
+    if request.method == 'POST':
+        hours = 0
+        minutes = 0
+        seconds = 0
+    else:
+        timer_start = Time.objects.last()
+        current_time = timezone.now()
+        duration = current_time - timer_start.time
+        total_sec = duration.total_seconds()
+        hours, reminder = divmod(total_sec, 3600)
+        minutes, seconds = divmod(reminder, 60)
+    return hours, minutes, int(seconds)
+
 
 def button(request):
+    current_time = timezone.now()
     user = get_user_or_create_temporary_user(request)
     person, created = Person.objects.get_or_create(user_name=user)
 
     if request.method == 'POST': 
         button_value = request.POST.get('button_click')
-        current_time = timezone.now()
 
         if Time.objects.count() != 0:
             penultimate_activity = Time.objects.last()
             penultimate_activity.duration = current_time - penultimate_activity.time
             penultimate_activity.save()
 
-        if timezone.now().day != penultimate_activity.time.day:
-            setting_the_day_border(penultimate_activity, current_time, user)
+            if timezone.now().day != penultimate_activity.time.day:
+                setting_the_day_border(penultimate_activity, current_time, user)
 
         Time.objects.create(name=user, time=current_time, current_activity=button_value)
         current_activity = Time.objects.filter(name=user).order_by('-time')[0]
         all_activities = Time.objects.filter(name=user).order_by('-time')[1:]
+        start_hours, start_minutes, start_seconds = timer_start(request)
 
         data = {'current_activity': current_activity,
                 'all': all_activities,
                 'person': person,
+                'start_hours': start_hours,
+                'start_minutes': start_minutes,
+                'start_seconds': start_seconds
                 }
         return render(request, 'feel_the_time/main.html', context=data)
     else:
 
         all_activities = Time.objects.filter(name=user).order_by('-time')[1:]
+        start_hours, start_minutes, start_seconds = timer_start(request)
+
         data = {'all': all_activities,
                 'person': person,
+                'start_hours': start_hours,
+                'start_minutes': start_minutes,
+                'start_seconds': start_seconds,
                 }
         return render(request, 'feel_the_time/main.html', context=data)
 
@@ -135,7 +158,11 @@ def graph(request, period: str):
         graphic = base64.b64encode(image_png)
         graphic = graphic.decode('utf-8')
 
-        return render(request, 'feel_the_time/graph.html', context={'graphic': graphic, 'period': period})
+        data = {'graphic': graphic,
+                'period': period
+                }
+
+        return render(request, 'feel_the_time/graph.html', context=data)
 
 class ButtonSetView(View):
     def get(self, request):

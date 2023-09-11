@@ -18,7 +18,7 @@
     <h2>Feel the time</h2>
     <form method="post", class="form-1">
         {% csrf_token %}
-        <div>
+        <div class = "columns">
             {% for button in person.actual_button_set %}
                 <button type="submit" class="ordinary_button" name="button_click" value="{{ button }}">{{ button }}</button>
             {% endfor %}
@@ -27,8 +27,50 @@
 
     <form class="form-2">
         <h2>Сейчас: {{ current_activity.current_activity }} - {{ current_activity.time|date:"H:i:s" }}</h2>
+
+    <div class="timer">
+        <span id="hours"></span>:
+        <span id="minutes"></span>:
+        <span id="seconds"></span>
+    </div>
+
+    <script>
+        const hoursDisplay = document.getElementById('hours');
+        const minutesDisplay = document.getElementById('minutes');
+        const secondsDisplay = document.getElementById('seconds');
+
+        let hours = {{ start_hours }};
+        let minutes = {{ start_minutes }};
+        let seconds = {{ start_seconds }};
+
+        function updateDisplay() {
+            hoursDisplay.textContent = hours.toString().padStart(2, '0');
+            minutesDisplay.textContent = minutes.toString().padStart(2, '0');
+            secondsDisplay.textContent = seconds.toString().padStart(2, '0');
+        }
+
+        updateDisplay();
+
+        function updateTime() {
+            seconds++;
+            if (seconds == 60) {
+                seconds = 0;
+                minutes++;
+                if (minutes == 60) {
+                    minutes = 0;
+                    hours++;
+                }
+            }
+
+        updateDisplay()
+
+        }
+
+        setInterval(updateTime, 1000);
+    </script>
+
         <br>
-        <textarea cols="84" rows="17">
+        <textarea cols="100" rows="17">
         {% for item in all %}
             {{ item.name.username }} - {{ item.current_activity }} - {{ item.time|date:"H:i:s" }} - {{ item.duration|format_timedelta }}
         {% endfor %}

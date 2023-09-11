@@ -1,15 +1,16 @@
 body {
-    margin: 0;
+
     font-family: Sans-Serif;
 }
 
 h2 {
     width: 50%;
-    margin: 20px auto 5px;
+    margin: 20px auto 40px;
     text-align: center;
     padding: 5px;
     border-radius: 5px;
     box-shadow: 0 2px 8px #3ca3c1;
+
 }
 
 .form-1 {
@@ -21,6 +22,9 @@ h2 {
     font-size: 16px;
     background-color: white;
     box-shadow: 0 2px 8px #3ca3c1;
+}
+
+textarea {
 }
 
 .form-2 {
@@ -41,10 +45,20 @@ h2 {
 
 }
 
-div {
+.columns {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     padding: 1rem;
+
+}
+
+.timer {
+    text-align: center;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
 
 }
 
@@ -57,6 +71,7 @@ div {
     margin: 0.5rem;
     padding: 12px 20px;
     font-size: 18px;
+
 
 }
 
