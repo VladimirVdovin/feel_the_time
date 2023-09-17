@@ -108,34 +108,37 @@ def button(request):
         return render(request, 'feel_the_time/main.html', context=data)
 
 
-def graph(request, period: str):
-
+def aggregate_time_duration(user, **kwargs):
     total_time = []
-    user = get_user_or_create_temporary_user(request)
     activities = Person.objects.get(user_name=user).actual_button_set
+    for obj in activities:
+        sum_result = Time.objects.filter(name=user, current_activity=obj, **kwargs).aggregate(Sum('duration'))
+        total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
+    return total_time, activities
+
+def graph(request, period: str):
+    user = get_user_or_create_temporary_user(request)
     now = timezone.now()
     current_time = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
     if period == "day":
-        for obj in activities:
-            sum_result = Time.objects.filter(name=user, current_activity=obj, time__day=current_time.day).aggregate(Sum('duration'))
-            total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
+        total_time, activities = aggregate_time_duration(user, time__day=current_time.day)
 
+    elif period == "yesterday":
+        total_time, activities = aggregate_time_duration(user, time__day=current_time.day-1)
+
+    elif period == "day_before_yesterday":
+        total_time, activities = aggregate_time_duration(user, time__day=current_time.day-2)
 
     elif period == 'week':
         current_weekday = current_time.weekday()
         start_of_week = current_time - timedelta(days=current_weekday)
-        for obj in activities:
-            sum_result = Time.objects.filter(name=user, current_activity=obj, time__day__gte=start_of_week.day).aggregate(Sum('duration'))
-            total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
+        total_time, activities = aggregate_time_duration(user, time__day__gte=start_of_week.day)
 
     elif period == 'month':
         current_monthday = current_time.day
         start_of_month = current_time - timedelta(days=current_monthday-1)
-        for obj in activities:
-            sum_result = Time.objects.filter(name=user, current_activity=obj, time__day__gte=start_of_month.day).aggregate(Sum('duration'))
-            total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
-
+        total_time, activities = aggregate_time_duration(user, time__day__gte=start_of_month.day)
 
     plt.figure(figsize=(9, 5))
     plt.barh(activities, total_time)
@@ -244,7 +247,7 @@ def authorization(request):
     return render(request, 'feel_the_time/authorization.html', context={'form': form})
 
 def about(request):
-    return HttpResponse('<h1>Здесь будет информация о программе</h1>')
+    return render(request, 'feel_the_time/about.html')
 
 
 

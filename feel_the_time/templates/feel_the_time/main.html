@@ -17,11 +17,11 @@
 
     {% include 'includes/navbar.html' %}
 
-    <div class="{% if current_activity %} timer {% else %} attention {% endif %}">
+    <div class="timer">
         {% if current_activity %}
             <h3>{{ current_activity.current_activity }}</h3>
         {% else %}
-            <h4>Смотри, время уходит:</h4><br>
+            <h3>Смотри, время уходит:</h3>
         {% endif %}
         <div class="timer">
             <span id="hours"></span>:
@@ -30,43 +30,9 @@
         </div>
     </div>
 
-    <script>
-        const hoursDisplay = document.getElementById('hours');
-        const minutesDisplay = document.getElementById('minutes');
-        const secondsDisplay = document.getElementById('seconds');
-        let hours = {{ start_hours }};
-        let minutes = {{ start_minutes }};
-        let seconds = {{ start_seconds }};
-        function updateDisplay() {
-            hoursDisplay.textContent = hours.toString().padStart(2, '0');
-            minutesDisplay.textContent = minutes.toString().padStart(2, '0');
-            secondsDisplay.textContent = seconds.toString().padStart(2, '0');
-        }
-        updateDisplay();
-        function updateTime() {
-            seconds++;
-            if (seconds == 60) {
-                seconds = 0;
-                minutes++;
-                if (minutes == 60) {
-                    minutes = 0;
-                    hours++;
-                }
-            }
-        updateDisplay()
-        }
-        setInterval(updateTime, 1000);
-    </script>
-
-    {% if not current_activity %}
-    <div class="attention">
-        <h4>Чем ты сейчас занят? Начни делать что-то конкретное!<br>Жми на кнопку и делай!<br></h4>
-    </div>
-    {% endif %}
-
-
     <form method="post", class="form-1">
         {% csrf_token %}
+        <a class="attention">Чем ты сейчас занят?</a>
         <div class = "columns">
             {% for button in person.actual_button_set %}
                 <button type="submit" class="ordinary_button" name="button_click" value="{{ button }}">{{ button }}</button>
@@ -78,8 +44,9 @@
 
     {% if not current_activity %}
         <div class="attention">
-            <h4>Твой прогресс будет отображаться в этом поле,<br>а аналитика будет доступна в разделе "Графики"<br>
-            Чтобы сохранить прогресс - <a href="url registration">зарегистрируйся</a></h4>
+            <h4>Твой прогресс будет отображаться в этом поле,<br>
+            а аналитика будет доступна в разделе <a href="{% url 'graph' period='day' %}">"Графики"</a><br>
+            Чтобы сохранить прогресс - <a href="{% url 'registration' %}">зарегистрируйся</a></h4>
         </div>
     {% endif %}
 
@@ -92,5 +59,42 @@
         </textarea>
 
     </div>
-<div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+    const hoursDisplay = document.getElementById('hours');
+    const minutesDisplay = document.getElementById('minutes');
+    const secondsDisplay = document.getElementById('seconds');
+    let hours = {{ start_hours }};
+    let minutes = {{ start_minutes }};
+    let seconds = {{ start_seconds }};
+
+    function updateDisplay() {
+        hoursDisplay.textContent = hours.toString().padStart(2, '0');
+        minutesDisplay.textContent = minutes.toString().padStart(2, '0');
+        secondsDisplay.textContent = seconds.toString().padStart(2, '0');
+    }
+
+    updateDisplay();
+
+    function updateTime() {
+        seconds++;
+        if (seconds == 60) {
+            seconds = 0;
+            minutes++;
+            if (minutes == 60) {
+                minutes = 0;
+                hours++;
+            }
+        }
+
+        updateDisplay()
+    }
+    setInterval(updateTime, 1000);
+    });
+
+</script>
+
 {% endblock %}

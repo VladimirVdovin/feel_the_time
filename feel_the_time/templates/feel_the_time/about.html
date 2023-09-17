@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block title %}
+    О программе
+{% endblock %}
+
+{% block css_additional %}
+    <link rel="stylesheet" href="{% static 'feel_of_time/css/main.css' %}">
+{% endblock %}
+
+{% block body %}
+
+    {% include 'includes/navbar.html' %}
+
+    <h3>Что такое FEEL THE TIME</h3>
+    <div class="form-2">
+        <textarea readonly cols = "100" rows="5">
+FEEL THE TIME помогает настроить внутренне чувство времени – способность ощущать течение времени максимально подробно, в минутах и секундах. Путем фиксации ежедневных активностей в базе данных и анализа этой информации, FEEL THE TIME позволяет лучше понять свое положение во времени и использовать эти знания для оптимизации распорядка дня.
+        </textarea>
+    </div>
+
+{% endblock %}

@@ -9,15 +9,33 @@
 </head>
 <body>
     {% include 'includes/navbar.html' %}
+
     {% if period == 'day' %}
         <h2>График активности за сегодня</h2>
+    {% elif period == 'yesterday' %}
+        <h2>График активности за вчера</h2>
+    {% elif period == 'day_before_yesterday' %}
+        <h2>График активности за позавчера</h2>
     {% elif period == 'week' %}
         <h2>График активности за неделю</h2>
     {% elif period == 'month' %}
         <h2>График активности за месяц</h2>
     {% endif %}
+
+
     <div class="form-3">
-        <img src="data:image/png;base64,{{ graphic }}" alt="График стоимости машин">
+        <img src="data:image/png;base64,{{ graphic }}" alt="График активности">
     </div>
+
+<nav>
+    <ul>
+        <li><a href="{% url 'graph' period='day' %}">Сегодня</a></li>
+        <li><a href="{% url 'graph' period='yesterday' %}">Вчера</a></li>
+        <li><a href="{% url 'graph' period='day_before_yesterday' %}">Позавчера</a></li>
+        <li><a href="{% url 'graph' period='week' %}">Неделя</a></li>
+        <li><a href="{% url 'graph' period='month' %}">Месяц</a></li>
+    </ul>
+</nav>
+
 </body>
 </html>
