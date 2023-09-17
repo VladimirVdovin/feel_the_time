@@ -1,10 +1,13 @@
 
+<h2>FEEL THE TIME</h2>
+
 <nav>
     <ul>
         <li><a href="{% url 'main_page' %}">Главная</a></li>
-        <li><a href="{% url 'graph' period='day' %}">День</a></li>
-        <li><a href="{% url 'graph' period='week' %}">Неделя</a></li>
-        <li><a href="{% url 'graph' period='month' %}">Месяц</a></li>
+        <li><a href="{% url 'graph' period='day' %}">Графики</a></li>
+<!--        <li><a href="{% url 'graph' period='day' %}">День</a></li>-->
+<!--        <li><a href="{% url 'graph' period='week' %}">Неделя</a></li>-->
+<!--        <li><a href="{% url 'graph' period='month' %}">Месяц</a></li>-->
         <li><a href="{% url 'buttons_set' %}">Кнопки</a></li>
         <li><a href="{% url 'about'%}">О проекте</a></li>
         {% if user.is_authenticated%}

@@ -8,49 +8,41 @@
 {% endblock %}
 
 {% block css_additional %}
-    <link rel="stylesheet" href="{% static 'feel_of_time/main.css' %}">
+    <link rel="stylesheet" href="{% static 'feel_of_time/css/main.css' %}">
 {% endblock %}
 
 {% block body %}
 
+<div class="main">
+
     {% include 'includes/navbar.html' %}
 
-    <h2>Feel the time</h2>
-    <form method="post", class="form-1">
-        {% csrf_token %}
-        <div class = "columns">
-            {% for button in person.actual_button_set %}
-                <button type="submit" class="ordinary_button" name="button_click" value="{{ button }}">{{ button }}</button>
-            {% endfor %}
+    <div class="{% if current_activity %} timer {% else %} attention {% endif %}">
+        {% if current_activity %}
+            <h3>{{ current_activity.current_activity }}</h3>
+        {% else %}
+            <h4>Смотри, время уходит:</h4><br>
+        {% endif %}
+        <div class="timer">
+            <span id="hours"></span>:
+            <span id="minutes"></span>:
+            <span id="seconds"></span>
         </div>
-    </form>
-
-    <form class="form-2">
-        <h2>Сейчас: {{ current_activity.current_activity }} - {{ current_activity.time|date:"H:i:s" }}</h2>
-
-    <div class="timer">
-        <span id="hours"></span>:
-        <span id="minutes"></span>:
-        <span id="seconds"></span>
     </div>
 
     <script>
         const hoursDisplay = document.getElementById('hours');
         const minutesDisplay = document.getElementById('minutes');
         const secondsDisplay = document.getElementById('seconds');
-
         let hours = {{ start_hours }};
         let minutes = {{ start_minutes }};
         let seconds = {{ start_seconds }};
-
         function updateDisplay() {
             hoursDisplay.textContent = hours.toString().padStart(2, '0');
             minutesDisplay.textContent = minutes.toString().padStart(2, '0');
             secondsDisplay.textContent = seconds.toString().padStart(2, '0');
         }
-
         updateDisplay();
-
         function updateTime() {
             seconds++;
             if (seconds == 60) {
@@ -61,21 +53,44 @@
                     hours++;
                 }
             }
-
         updateDisplay()
-
         }
-
         setInterval(updateTime, 1000);
     </script>
 
+    {% if not current_activity %}
+    <div class="attention">
+        <h4>Чем ты сейчас занят? Начни делать что-то конкретное!<br>Жми на кнопку и делай!<br></h4>
+    </div>
+    {% endif %}
+
+
+    <form method="post", class="form-1">
+        {% csrf_token %}
+        <div class = "columns">
+            {% for button in person.actual_button_set %}
+                <button type="submit" class="ordinary_button" name="button_click" value="{{ button }}">{{ button }}</button>
+            {% endfor %}
+        </div>
+    </form>
+
+    <div class="form-2">
+
+    {% if not current_activity %}
+        <div class="attention">
+            <h4>Твой прогресс будет отображаться в этом поле,<br>а аналитика будет доступна в разделе "Графики"<br>
+            Чтобы сохранить прогресс - <a href="url registration">зарегистрируйся</a></h4>
+        </div>
+    {% endif %}
+
+
         <br>
-        <textarea cols="100" rows="17">
+        <textarea readonly cols = "100" rows="17">
         {% for item in all %}
-            {{ item.name.username }} - {{ item.current_activity }} - {{ item.time|date:"H:i:s" }} - {{ item.duration|format_timedelta }}
+{{ item.name.username }} - {{ item.current_activity }} - {{ item.time|date:"H:i:s" }} - {{ item.duration|format_timedelta }}
         {% endfor %}
         </textarea>
 
-    </form>
-
+    </div>
+<div>
 {% endblock %}

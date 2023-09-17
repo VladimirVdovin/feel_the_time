@@ -44,13 +44,13 @@ def setting_the_day_border(penultimate_activity, current_time, user):
     Time.objects.create(name=user, time=midnight, current_activity=penultimate_activity.current_activity,
                         duration=after_midnight)
 
-def timer_start(request):
-    if request.method == 'POST':
+def timer_start(request, user):
+    if request.method == 'POST' or Time.objects.filter(name=user).count() == 0:
         hours = 0
         minutes = 0
         seconds = 0
     else:
-        timer_start = Time.objects.last()
+        timer_start = Time.objects.filter(name=user).last()
         current_time = timezone.now()
         duration = current_time - timer_start.time
         total_sec = duration.total_seconds()
@@ -67,8 +67,8 @@ def button(request):
     if request.method == 'POST': 
         button_value = request.POST.get('button_click')
 
-        if Time.objects.count() != 0:
-            penultimate_activity = Time.objects.last()
+        if Time.objects.filter(name=user).count() != 0:
+            penultimate_activity = Time.objects.filter(name=user).last()
             penultimate_activity.duration = current_time - penultimate_activity.time
             penultimate_activity.save()
 
@@ -78,7 +78,7 @@ def button(request):
         Time.objects.create(name=user, time=current_time, current_activity=button_value)
         current_activity = Time.objects.filter(name=user).order_by('-time')[0]
         all_activities = Time.objects.filter(name=user).order_by('-time')[1:]
-        start_hours, start_minutes, start_seconds = timer_start(request)
+        start_hours, start_minutes, start_seconds = timer_start(request, user)
 
         data = {'current_activity': current_activity,
                 'all': all_activities,
@@ -90,10 +90,16 @@ def button(request):
         return render(request, 'feel_the_time/main.html', context=data)
     else:
 
-        all_activities = Time.objects.filter(name=user).order_by('-time')[1:]
-        start_hours, start_minutes, start_seconds = timer_start(request)
+        if Time.objects.filter(name=user).count() != 0:
+            current_activity = Time.objects.filter(name=user).order_by('-time')[0]
+            all_activities = Time.objects.filter(name=user).order_by('-time')[1:]
+        else:
+            current_activity = ''
+            all_activities = ''
+        start_hours, start_minutes, start_seconds = timer_start(request, user)
 
-        data = {'all': all_activities,
+        data = {'current_activity': current_activity,
+                'all': all_activities,
                 'person': person,
                 'start_hours': start_hours,
                 'start_minutes': start_minutes,
@@ -104,69 +110,67 @@ def button(request):
 
 def graph(request, period: str):
 
-    if not request.user.is_authenticated and not request.session.get('temporary_user'):
-        return redirect('main_page')
-    else:
+    total_time = []
+    user = get_user_or_create_temporary_user(request)
+    activities = Person.objects.get(user_name=user).actual_button_set
+    now = timezone.now()
+    current_time = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
-        total_time = []
-        activities = Person.objects.get(user_name=request.user).actual_button_set
-        now = timezone.now()
-        current_time = now.replace(hour=0, minute=0, second=0, microsecond=0)
-
-        if period == "day":
-            for obj in activities:
-                sum_result = Time.objects.filter(current_activity=obj, time__day=current_time.day).aggregate(Sum('duration'))
-                total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
+    if period == "day":
+        for obj in activities:
+            sum_result = Time.objects.filter(name=user, current_activity=obj, time__day=current_time.day).aggregate(Sum('duration'))
+            total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
 
 
-        elif period == 'week':
-            current_weekday = current_time.weekday()
-            start_of_week = current_time - timedelta(days=current_weekday)
-            for obj in activities:
-                sum_result = Time.objects.filter(current_activity=obj, time__day__gte=start_of_week.day).aggregate(Sum('duration'))
-                total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
+    elif period == 'week':
+        current_weekday = current_time.weekday()
+        start_of_week = current_time - timedelta(days=current_weekday)
+        for obj in activities:
+            sum_result = Time.objects.filter(name=user, current_activity=obj, time__day__gte=start_of_week.day).aggregate(Sum('duration'))
+            total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
 
-        elif period == 'month':
-            current_monthday = current_time.day
-            start_of_month = current_time - timedelta(days=current_monthday-1)
-            for obj in activities:
-                sum_result = Time.objects.filter(current_activity=obj, time__day__gte=start_of_month.day).aggregate(Sum('duration'))
-                total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
+    elif period == 'month':
+        current_monthday = current_time.day
+        start_of_month = current_time - timedelta(days=current_monthday-1)
+        for obj in activities:
+            sum_result = Time.objects.filter(name=user, current_activity=obj, time__day__gte=start_of_month.day).aggregate(Sum('duration'))
+            total_time.append((sum_result['duration__sum'] or timedelta(seconds=0)).total_seconds())
 
 
-        plt.figure(figsize=(9, 5))
-        plt.barh(activities, total_time)
-        max_time = max(total_time)
-        x_limit = max_time * 1.3
+    plt.figure(figsize=(9, 5))
+    plt.barh(activities, total_time)
+    max_time = max(total_time)
+    x_limit = max_time * 1.3
 
-        plt.xlabel('Время')
-        plt.ylabel('Активность')
-        plt.title('Затраченное время')
-        plt.xlim(0, x_limit)
+    plt.xlabel('Время')
+    plt.ylabel('Активность')
+    plt.title('Затраченное время')
+    plt.xlim(0, x_limit)
 
-        for i, time in enumerate(total_time):
-            plt.annotate(f'{int(time//3600)} ч {int((time % 3600)//60)} мин', (time, i), textcoords="offset points",
-                         xytext=(35, 0), ha='center', fontsize=10)
+    for i, time in enumerate(total_time):
+        plt.annotate(f'{int(time//3600)} ч {int((time % 3600)//60)} мин', (time, i), textcoords="offset points",
+                     xytext=(35, 0), ha='center', fontsize=10)
 
-        buffer = BytesIO()
-        plt.savefig(buffer, format='png')
-        plt.close()
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()
 
-        buffer.seek(0)
-        image_png = buffer.getvalue()
-        buffer.close()
-        graphic = base64.b64encode(image_png)
-        graphic = graphic.decode('utf-8')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    graphic = base64.b64encode(image_png)
+    graphic = graphic.decode('utf-8')
 
-        data = {'graphic': graphic,
-                'period': period
-                }
+    data = {'graphic': graphic,
+            'period': period
+            }
 
-        return render(request, 'feel_the_time/graph.html', context=data)
+    return render(request, 'feel_the_time/graph.html', context=data)
 
 class ButtonSetView(View):
     def get(self, request):
-        person = Person.objects.get(user_name=request.user)
+        user = get_user_or_create_temporary_user(request)
+        person = Person.objects.get(user_name=user)
 
         form = PersonalButtonsForm()
         content = {
@@ -176,6 +180,7 @@ class ButtonSetView(View):
         return render(request, 'feel_the_time/buttons.html', context=content)
 
     def post(self, request):
+        user = get_user_or_create_temporary_user(request)
         if 'button_set_form' in request.POST:
             checkbox_set = request.POST.getlist("checkbox_set")
             buttons_change = Person.objects.get(user_name=request.user)
@@ -184,7 +189,7 @@ class ButtonSetView(View):
             return HttpResponse(buttons_change.actual_button_set)
 
         elif 'add_button_form' in request.POST:
-            person = Person.objects.get(user_name=request.user)
+            person = Person.objects.get(user_name=user)
 
             old_buttons = person.actual_button_set or []
             all_buttons = person.all_personal_buttons or []
