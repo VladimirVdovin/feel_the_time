@@ -46,15 +46,20 @@ textarea {
     border: none;
     resize: none;
     overflow: auto;
-        white-space: pre-wrap; /* Сохраняет переносы предложений, но не добавляет переносы строк */
-    word-wrap: break-word;
 }
 
 
 .attention {
     margin: 1.5rem auto 1.5rem;
     padding: 0.5rem;
-    width: 500px;
+    text-align: center;
+    font-family: Inter;
+    font-size: 22px;
+}
+
+.attention2 {
+    margin: -3rem auto 1.5rem;
+    padding: 0.5rem;
     text-align: center;
     font-family: Inter;
     font-size: 22px;
@@ -155,5 +160,8 @@ nav a {
     transition: background-color 0.3s ease;
 }
 
+.input {
+    font-size: 30px;
 
+}
 

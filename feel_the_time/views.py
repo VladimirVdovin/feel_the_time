@@ -77,7 +77,7 @@ def button(request):
 
         Time.objects.create(name=user, time=current_time, current_activity=button_value)
         current_activity = Time.objects.filter(name=user).order_by('-time')[0]
-        all_activities = Time.objects.filter(name=user).order_by('-time')[1:]
+        all_activities = Time.objects.filter(name=user).order_by('-time')#[1:]
         start_hours, start_minutes, start_seconds = timer_start(request, user)
 
         data = {'current_activity': current_activity,
@@ -92,7 +92,7 @@ def button(request):
 
         if Time.objects.filter(name=user).count() != 0:
             current_activity = Time.objects.filter(name=user).order_by('-time')[0]
-            all_activities = Time.objects.filter(name=user).order_by('-time')[1:]
+            all_activities = Time.objects.filter(name=user).order_by('-time')#[1:]
         else:
             current_activity = ''
             all_activities = ''
@@ -153,6 +153,8 @@ def graph(request, period: str):
     for i, time in enumerate(total_time):
         plt.annotate(f'{int(time//3600)} ч {int((time % 3600)//60)} мин', (time, i), textcoords="offset points",
                      xytext=(35, 0), ha='center', fontsize=10)
+
+    # plt.tight_layout()
 
     buffer = BytesIO()
     plt.savefig(buffer, format='png')

@@ -30,9 +30,9 @@
         </div>
     </div>
 
+    <p class="attention2">Чем ты сейчас занят?</p>
     <form method="post", class="form-1">
         {% csrf_token %}
-        <a class="attention">Чем ты сейчас занят?</a>
         <div class = "columns">
             {% for button in person.actual_button_set %}
                 <button type="submit" class="ordinary_button" name="button_click" value="{{ button }}">{{ button }}</button>
@@ -54,7 +54,7 @@
         <br>
         <textarea readonly cols = "100" rows="17">
         {% for item in all %}
-{{ item.name.username }} - {{ item.current_activity }} - {{ item.time|date:"H:i:s" }} - {{ item.duration|format_timedelta }}
+{{ item.name.username }} - {{ item.current_activity }} - {{ item.time|date:"H:i:s" }} {% if item.duration %}- {{ item.duration|format_timedelta }} {% else %}- в процессе {% endif %}
         {% endfor %}
         </textarea>
 
