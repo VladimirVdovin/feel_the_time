@@ -31,11 +31,15 @@
     </div>
 
     <p class="attention2">Чем ты сейчас занят?</p>
-    <form method="post", class="form-1">
+    <form method="post" class="form-1">
         {% csrf_token %}
         <div class = "columns">
             {% for button in person.actual_button_set %}
-                <button type="submit" class="ordinary_button" name="button_click" value="{{ button }}">{{ button }}</button>
+                {% if button == current_activity.current_activity %}
+                    <button type="submit" class="ordinary_button" style="background-color: #E2DFDF" name="button_click" value="{{ button }}">{{ button }}</button>
+                {% else %}
+                    <button type="submit" class="ordinary_button" name="button_click" value="{{ button }}">{{ button }}</button>
+                {% endif %}
             {% endfor %}
         </div>
     </form>

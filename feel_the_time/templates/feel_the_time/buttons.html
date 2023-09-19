@@ -15,7 +15,7 @@
 
     {% include 'includes/navbar.html' %}
 
-    <h2>Определите набор кнопок-активностей</h2>
+    <h3>Определите набор кнопок-активностей</h2>
     <form method="post" class="form-1">
         {% csrf_token %}
         <div class = "columns">
@@ -34,7 +34,7 @@
 
     <form method="post" class="form-2">
         {% csrf_token %}
-        <h2>Cвоя кпопка</h2>
+        <h3>Cвоя кпопка</h3>
         <br>
         {% for field in form %}
         <div>

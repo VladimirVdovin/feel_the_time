@@ -1,19 +1,20 @@
 from django.shortcuts import render, redirect
-from django.utils import timezone
-from .models import Time, Activities, Person
+from .models import Time, Person
 from .forms import PersonalButtonsForm, RegistrationForm, AuthForm
+from django.contrib.auth.models import User
+from django.views import View
 from django.db.models import Sum
 from matplotlib import pyplot as plt
 from io import BytesIO
 import base64
-from datetime import timedelta, datetime
-from django.views import View
-from django.http import HttpResponse
 from django.contrib.auth import login
-from django.contrib.auth.models import User
 import random
+from datetime import timedelta
+from django.utils import timezone
 from tzlocal import get_localzone
 import pytz
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 def get_user_or_create_temporary_user(request):
@@ -77,35 +78,26 @@ def button(request):
 
         Time.objects.create(name=user, time=current_time, current_activity=button_value)
         current_activity = Time.objects.filter(name=user).order_by('-time')[0]
-        all_activities = Time.objects.filter(name=user).order_by('-time')#[1:]
-        start_hours, start_minutes, start_seconds = timer_start(request, user)
+        all_activities = Time.objects.filter(name=user).order_by('-time')
 
-        data = {'current_activity': current_activity,
-                'all': all_activities,
-                'person': person,
-                'start_hours': start_hours,
-                'start_minutes': start_minutes,
-                'start_seconds': start_seconds
-                }
-        return render(request, 'feel_the_time/main.html', context=data)
     else:
 
         if Time.objects.filter(name=user).count() != 0:
             current_activity = Time.objects.filter(name=user).order_by('-time')[0]
-            all_activities = Time.objects.filter(name=user).order_by('-time')#[1:]
+            all_activities = Time.objects.filter(name=user).order_by('-time')
         else:
             current_activity = ''
             all_activities = ''
-        start_hours, start_minutes, start_seconds = timer_start(request, user)
+    start_hours, start_minutes, start_seconds = timer_start(request, user)
 
-        data = {'current_activity': current_activity,
-                'all': all_activities,
-                'person': person,
-                'start_hours': start_hours,
-                'start_minutes': start_minutes,
-                'start_seconds': start_seconds,
-                }
-        return render(request, 'feel_the_time/main.html', context=data)
+    data = {'current_activity': current_activity,
+            'all': all_activities,
+            'person': person,
+            'start_hours': start_hours,
+            'start_minutes': start_minutes,
+            'start_seconds': start_seconds,
+            }
+    return render(request, 'feel_the_time/main.html', context=data)
 
 
 def aggregate_time_duration(user, **kwargs):
@@ -191,7 +183,7 @@ class ButtonSetView(View):
             buttons_change = Person.objects.get(user_name=request.user)
             buttons_change.actual_button_set = checkbox_set
             buttons_change.save()
-            return HttpResponse(buttons_change.actual_button_set)
+            return HttpResponseRedirect(reverse('main_page'))
 
         elif 'add_button_form' in request.POST:
             person = Person.objects.get(user_name=user)
