@@ -132,6 +132,8 @@ h4 {
 
 
 nav {
+max-width: 50rem
+    width: 90%;
     margin: 0 auto 50px;
 }
 
@@ -146,13 +148,13 @@ nav ul {
 
 nav li {
     margin: 0 10px;
-    font-size: 18px;
+    font-size: 20px;
 }
 
 
 nav a {
     display: block;
-    padding: 10px 20px;
+    padding: 12px 10px;
     text-decoration: none;
     border-color: #CEEDCD;
     border: 3px solid #CEEDCD;
