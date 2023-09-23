@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import dj_database_url
 import environ
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,11 +28,13 @@ environ.Env.read_env()
 SECRET_KEY = 'django-insecure-@j%^=tv2^a%!-=gc)+%ev$zg%+*@hmb6eo4uittwh6sfzn_=9-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-ALLOWED_HOSTS = ['*']
 
-# DEBUG = True
-# ALLOWED_HOSTS = []
+if 'RENDER' in os.environ:
+    DEBUG = False
+    ALLOWED_HOSTS = ['*']
+else:
+    DEBUG = True
+    ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -81,21 +84,24 @@ WSGI_APPLICATION = 'next_level.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'feel_the_time',
-#         'USER': 'postgres',
-#         'PASSWORD': '1',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#     }
-# }
 
 
-DATABASES = {
-    'default': dj_database_url.parse(env('DATABASE_URL'))
-}
+if 'RENDER' in os.environ:
+    DATABASES = {
+        'default': dj_database_url.parse(env('DATABASE_URL'))
+    }
+
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'feel_the_time',
+            'USER': 'postgres',
+            'PASSWORD': '1',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
+    }
 
 
 
