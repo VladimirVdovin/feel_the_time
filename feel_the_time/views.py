@@ -88,6 +88,9 @@ def button(request):
         else:
             current_activity = ''
             all_activities = ''
+            text_area = 'Твой прогресс будет отображаться в этом поле, ' \
+                        'а аналитика будет доступна в разделе "Графики" ' \
+                        'Чтобы сохранить прогресс - зарегистрируйся'
     start_hours, start_minutes, start_seconds = timer_start(request, user)
 
     data = {'current_activity': current_activity,
@@ -96,6 +99,7 @@ def button(request):
             'start_hours': start_hours,
             'start_minutes': start_minutes,
             'start_seconds': start_seconds,
+            'text_area': text_area
             }
     return render(request, 'feel_the_time/main.html', context=data)
 
