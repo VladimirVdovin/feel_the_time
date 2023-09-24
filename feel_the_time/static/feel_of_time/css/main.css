@@ -149,13 +149,13 @@ nav ul {
 
 nav li {
     margin: 0 10px;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 
 nav a {
     display: block;
-    padding: 12px 10px;
+    padding: 12px 2px;
     text-decoration: none;
     border-color: #CEEDCD;
     border: 3px solid #CEEDCD;
