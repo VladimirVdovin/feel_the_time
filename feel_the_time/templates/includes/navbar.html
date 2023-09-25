@@ -10,8 +10,12 @@
         {% if user.is_authenticated%}
             <a href="{% url 'logout' %}">{{ user.username }}, выйти</a>
         {% else %}
-<!--            <li><a href="{% url 'registration' %}">Регистрация</a></li>-->
-            <li><a href="{% url 'authorization' %}">Авторизация</a></li>
+            <li><a href='#'>Пользователь</a></li>
+                <ul>
+                    <li><a href="{% url 'registration' %}">Регистрация</a></li>
+                    <li><a href="{% url 'authorization' %}">Авторизация</a></li>
+                </ul>
+
         {% endif %}
     </ul>
 </nav>

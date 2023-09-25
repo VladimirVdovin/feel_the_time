@@ -151,7 +151,7 @@ def graph(request, period: str):
         plt.annotate(f'{int(time//3600)} ч {int((time % 3600)//60)} мин', (time, i), textcoords="offset points",
                      xytext=(35, 0), ha='center', fontsize=10)
 
-    # plt.tight_layout()
+    plt.tight_layout()
 
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
