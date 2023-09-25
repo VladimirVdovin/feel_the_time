@@ -137,7 +137,7 @@ def graph(request, period: str):
         start_of_month = current_time - timedelta(days=current_monthday-1)
         total_time, activities = aggregate_time_duration(user, time__day__gte=start_of_month.day)
 
-    plt.figure(figsize=(5, 4))
+    plt.figure(figsize=(7, 5))
     plt.barh(activities, total_time)
     max_time = max(total_time)
     x_limit = max_time * 1.3
