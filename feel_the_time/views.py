@@ -92,6 +92,7 @@ def button(request):
                         'а аналитика будет доступна в разделе "Графики" ' \
                         'Чтобы сохранить прогресс - зарегистрируйся'
     start_hours, start_minutes, start_seconds = timer_start(request, user)
+    text_area = ''
 
     data = {'current_activity': current_activity,
             'all': all_activities,
