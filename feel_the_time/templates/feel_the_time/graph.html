@@ -2,7 +2,6 @@
 
 {% load static %}
 
-
 {% block title %}
     График
 {% endblock %}
@@ -16,15 +15,15 @@
     {% include 'includes/navbar.html' %}
 
     {% if period == 'day' %}
-        <h3>График активности за сегодня</h3>
+        <h3 class="titles">График активности за сегодня</h3>
     {% elif period == 'yesterday' %}
-        <h3>График активности за вчера</h3>
+        <h3 class="titles">График активности за вчера</h3>
     {% elif period == 'day_before_yesterday' %}
-        <h3>График активности за позавчера</h3>
+        <h3 class="titles">График активности за позавчера</h3>
     {% elif period == 'week' %}
-        <h3>График активности за неделю</h3>
+        <h3 class="titles">График активности за неделю</h3>
     {% elif period == 'month' %}
-        <h3>График активности за месяц</h3>
+        <h3 class="titles">График активности за месяц</h3>
     {% endif %}
 
 

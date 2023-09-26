@@ -137,7 +137,7 @@ def graph(request, period: str):
         start_of_month = current_time - timedelta(days=current_monthday-1)
         total_time, activities = aggregate_time_duration(user, time__day__gte=start_of_month.day)
 
-    plt.figure(figsize=(3, 3))
+    plt.figure(figsize=(7, 5))
     plt.barh(activities, total_time)
     max_time = max(total_time)
     x_limit = max_time * 1.3
@@ -151,7 +151,7 @@ def graph(request, period: str):
         plt.annotate(f'{int(time//3600)} ч {int((time % 3600)//60)} мин', (time, i), textcoords="offset points",
                      xytext=(35, 0), ha='center', fontsize=10)
 
-    plt.tight_layout()
+    # plt.tight_layout()
 
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
@@ -172,12 +172,13 @@ def graph(request, period: str):
 class ButtonSetView(View):
     def get(self, request):
         user = get_user_or_create_temporary_user(request)
-        person = Person.objects.get(user_name=user)
+        # person = Person.objects.get(user_name=user)
+
 
         form = PersonalButtonsForm()
         content = {
             'form': form,
-            'person': person,
+            # 'person': person,
             }
         return render(request, 'feel_the_time/buttons.html', context=content)
 

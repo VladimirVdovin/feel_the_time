@@ -27,6 +27,16 @@ h3 {
     font-size: 26px;
 }
 
+.titles {
+    width: 50%;
+    margin: 45px auto 20px;
+    text-align: center;
+    padding: 5px;
+    color: #000;
+    font-family: Intro ;
+    font-size: 26px;
+}
+
 
 .form-1 {
     margin: -2rem auto 5px;
@@ -91,7 +101,7 @@ h4 {
     margin: 1.5rem auto 5px;
     width: 90%;
     max-width: 50rem;
-    padding: 0.5rem;
+    padding: 0rem 0.5rem 2rem 0.5rem;
     border-radius: 10px;
     font-size: 16px;
     background-color: #CEEDCD;
@@ -154,18 +164,25 @@ nav ul {
     padding: 0;
 }
 
+@media screen and (orientation: portrait) {
+nav ul li {
+    margin: 0 0.3rem;
+    font-size: 14px;
+    float: left;
+}}
 
+
+@media screen and (orientation: landscape) {
 nav ul li {
     margin: 0 0.3rem;
     font-size: 16px;
     float: left;
-}
+}}
 
 @media screen and (orientation: portrait) {
 nav a {
     display: block;
     padding: 10px 2px;
-    text-decoration: underline;
     border-color: #CEEDCD;
     border: 2px solid #CEEDCD;
     border-radius: 5px;
