@@ -50,17 +50,10 @@
         <textarea readonly cols = "100" rows="17">{{ text_area }}</textarea>
         {% endif %}
 
-<!--    {% if not current_activity %}-->
-<!--        <div class="attention">-->
-<!--            <h4>Твой прогресс будет отображаться в этом поле,<br>-->
-<!--            а аналитика будет доступна в разделе <a href="{% url 'graph' period='day' %}">"Графики"</a><br>-->
-<!--            Чтобы сохранить прогресс - <a href="{% url 'registration' %}">зарегистрируйся</a></h4>-->
-<!--        </div>-->
-<!--    {% endif %}-->
 
 
         <br>
-        <textarea readonly cols = "100" rows="17">
+        <textarea readonly cols = "100" rows="10">
         {% for item in all %}
 {{ item.name.username }} - {{ item.current_activity }} - {{ item.time|date:"H:i:s" }} {% if item.duration %}- {{ item.duration|format_timedelta }} {% else %}- в процессе {% endif %}
         {% endfor %}
