@@ -201,8 +201,15 @@ nav a {
 }}
 
 
-.input {
-    font-size: 30px;
+input {
+    font-size: 16px;
+    margin: 1rem
 
 }
+
+label {
+    font-size: 16px;
+}
+
+
 
