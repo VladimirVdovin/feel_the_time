@@ -172,13 +172,11 @@ def graph(request, period: str):
 class ButtonSetView(View):
     def get(self, request):
         user = get_user_or_create_temporary_user(request)
-        # person = Person.objects.get(user_name=user)
-
-
-        form = PersonalButtonsForm()
+        person = Person.objects.get(user_name=user)
+        form = PersonalButtonsForm(data=request.GET)
         content = {
             'form': form,
-            # 'person': person,
+            'person': person,
             }
         return render(request, 'feel_the_time/buttons.html', context=content)
 
@@ -186,7 +184,7 @@ class ButtonSetView(View):
         user = get_user_or_create_temporary_user(request)
         if 'button_set_form' in request.POST:
             checkbox_set = request.POST.getlist("checkbox_set")
-            buttons_change = Person.objects.get(user_name=request.user)
+            buttons_change = Person.objects.get(user_name=user)
             buttons_change.actual_button_set = checkbox_set
             buttons_change.save()
             return HttpResponseRedirect(reverse('main_page'))
@@ -217,7 +215,7 @@ class ButtonSetView(View):
                 instance.all_personal_ranks = old_ranks
 
                 instance.save()
-                form = PersonalButtonsForm()
+                form = PersonalButtonsForm(data=request.GET)
 
 
             return render(request, 'feel_the_time/buttons.html', context={'form': form,
